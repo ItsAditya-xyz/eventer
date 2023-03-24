@@ -15,6 +15,13 @@ import jwt
 from flask_cors import CORS
 from flask_mysqldb import MySQL
 
+import base64
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+from email.mime.text import MIMEText
+from email.mime.multipart import MIMEMultipart
+from email.mime.image import MIMEImage
+
 import binascii
 from base58 import b58decode_check
 from ecdsa import SECP256k1, SigningKey
@@ -157,6 +164,38 @@ def home_page_user():
         status=200,
         mimetype='application/json'
     )
+
+
+@app.route("/send-email", methods=["POST"])
+def sending_email(to, subject, body):
+        import smtplib
+        from email.mime.text import MIMEText
+        from email.mime.multipart import MIMEMultipart
+
+        message = MIMEMultipart()
+        message['To'] = to
+        message['Subject'] = subject
+
+        #adding the message body
+        body = MIMEText(body, 'html')
+        message.attach(body)
+
+
+        #creating SMTP details
+        smtp_server = "smtp.gmail.com"
+        smtp_port = 587
+        smtp_username = 'your_email@gmail.com'
+        smtp_password = 'your_password'
+
+        #login to the server
+        server = smtplib.SMTP(smtp_server, smtp_port)
+        server.starttls()
+        server.login(smtp_username, smtp_password)
+
+        #send the email
+        text = message.as_string()
+        server.sendmail(smtp_username, to, text)
+        server.quit()
 
 
 if __name__ == "__main__":
