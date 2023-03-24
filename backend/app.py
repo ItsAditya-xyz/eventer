@@ -14,10 +14,6 @@ import google
 import jwt
 from flask_cors import CORS
 from flask_mysqldb import MySQL
-
-import binascii
-from base58 import b58decode_check
-from ecdsa import SECP256k1, SigningKey
 import openai
 app = Flask(__name__)
 
@@ -74,14 +70,7 @@ def Generate_JWT(payload):
     return encoded_jwt
 
 
-def getDeSoJWT(seedHex):
-    # returns JWT token of user that helps in public key validation in backend
-    private_key = bytes(seedHex, "utf-8")
-    private_key = binascii.unhexlify(private_key)
-    key = SigningKey.from_string(private_key, curve=SECP256k1)
-    key = key.to_pem()
-    encoded_jwt = jwt.encode({}, key, algorithm="ES256")
-    return encoded_jwt
+
 
 
 @app.route("/callback")
