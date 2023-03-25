@@ -15,6 +15,10 @@ import jwt
 from flask_cors import CORS
 from flask_mysqldb import MySQL
 import openai
+import smtplib
+import ssl
+
+# TODO: add credentials for google login in .evn and use them here
 app = Flask(__name__)
 
 CORS(app)
@@ -28,6 +32,7 @@ app.config["MYSQL_PASSWORD"] = config("MYSQL_PASSWORD")
 DB_NAME = config("MYSQL_DB")
 app.config["MYSQL_DB"] = DB_NAME
 
+GMAIL_PASSWORD = config("GMAIL_PASSWORD")
 
 mysql = MySQL(app)
 # bypass http
@@ -54,7 +59,39 @@ flow = Flow.from_client_secrets_file(
 )
 
 
+def sendMail(recepient, subject, body):
+    try:
+        smtp_server = "smtp.gmail.com"
+        port = 587  # For starttls
+
+        import smtplib
+        import ssl
+
+        port = 587  # For starttls
+        smtp_server = "smtp.gmail.com"
+        sender_email = "eventer2023@gmail.com"
+        password = GMAIL_PASSWORD
+        receiver_email = recepient
+        message = f"""\
+        Subject: {subject}
+
+        {body}"""
+
+        context = ssl.create_default_context()
+        with smtplib.SMTP(smtp_server, port) as server:
+            server.ehlo()  # Can be omitted
+            server.starttls(context=context)
+            server.ehlo()  # Can be omitted
+            server.login(sender_email, password)
+            server.sendmail(sender_email, receiver_email, message)
+
+        return 200
+    except Exception as e:
+        print(e)
+        return 500
 # wrapper
+
+
 def login_required(function):
     def wrapper(*args, **kwargs):
         encoded_jwt = request.headers.get("Authorization").split("Bearer ")[1]
@@ -68,9 +105,6 @@ def login_required(function):
 def Generate_JWT(payload):
     encoded_jwt = jwt.encode(payload, app.secret_key, algorithm=algorithm)
     return encoded_jwt
-
-
-
 
 
 @app.route("/callback")
