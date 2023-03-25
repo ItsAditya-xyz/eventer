@@ -166,36 +166,48 @@ def home_page_user():
     )
 
 
+from flask import Flask, request
+
+app = Flask(__name__)
+
 @app.route("/send-email", methods=["POST"])
-def sending_email(to, subject, body):
-        import smtplib
-        from email.mime.text import MIMEText
-        from email.mime.multipart import MIMEMultipart
+def sending_email():
+    import smtplib
+    from email.mime.text import MIMEText
+    from email.mime.multipart import MIMEMultipart
 
-        message = MIMEMultipart()
-        message['To'] = to
-        message['Subject'] = subject
+    to = request.json["to"]
+    subject = request.json["subject"]
+    body = request.json["body"]
 
-        #adding the message body
-        body = MIMEText(body, 'html')
-        message.attach(body)
+    message = MIMEMultipart()
+    message['To'] = to
+    message['Subject'] = subject
 
+    #adding the message body
+    body = MIMEText(body, 'html')
+    message.attach(body)
 
-        #creating SMTP details
-        smtp_server = "smtp.gmail.com"
-        smtp_port = 587
-        smtp_username = 'your_email@gmail.com'
-        smtp_password = 'your_password'
+    #creating SMTP details
+    smtp_server = "smtp.gmail.com"
+    smtp_port = 587
+    smtp_username = 'eventer2023@gmail.com'
+    smtp_password = 'password'
 
-        #login to the server
-        server = smtplib.SMTP(smtp_server, smtp_port)
-        server.starttls()
-        server.login(smtp_username, smtp_password)
+    #login to the server
+    server = smtplib.SMTP(smtp_server, smtp_port)
+    server.starttls()
+    server.login(smtp_username, smtp_password)
 
-        #send the email
-        text = message.as_string()
-        server.sendmail(smtp_username, to, text)
-        server.quit()
+    #send the email
+    text = message.as_string()
+    server.sendmail(smtp_username, to, text)
+    server.quit()
+
+    return "Email sent successfully", 200
+
+if __name__ == "__main__":
+    app.run(debug=True, port=5000, host="0.0.0.0")
 
 
 if __name__ == "__main__":
