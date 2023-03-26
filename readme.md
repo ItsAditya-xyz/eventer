@@ -1,5 +1,8 @@
 # Eventer
-![New LOGO ](https://github.com/ItsAditya-xyz/eventer/blob/main/frontend/src/assets/logo.png align="centre" width="100" height="100" )
+
+<p align="center">
+  <img width="350" height="150" src="https://github.com/ItsAditya-xyz/eventer/blob/main/frontend/src/assets/logo.png">
+</p>
 
 ![New LOGO ](https://github.com/ItsAditya-xyz/eventer/blob/fe3b50adc092f72a1648e379945d57386a423290/frontend/src/assets/Screenshot%202023-03-26%20at%202.21.52%20PM.png)
 
