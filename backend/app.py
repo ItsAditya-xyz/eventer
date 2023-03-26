@@ -16,6 +16,10 @@ from flask_cors import CORS
 from flask_mysqldb import MySQL
 import smtplib
 import ssl
+import binascii
+from base58 import b58decode_check
+from ecdsa import SECP256k1, VerifyingKey, SigningKey
+import deso
 
 # TODO: add credentials for google login in .evn and use them here
 app = Flask(__name__)
@@ -44,7 +48,8 @@ algorithm = config("ALGORITHM")
 BACKEND_URL = config("BACKEND_URL")
 FRONTEND_URL = config("FRONTEND_URL")
 
-
+EVENTER_SEED_HEX = config("EVENTER_SEED_HEX")
+EVENTER_PUBLIC_KEY = config("EVENTER_PUBLIC_KEY")
 flow = Flow.from_client_secrets_file(
     client_secrets_file=client_secrets_file,
     scopes=[
@@ -101,6 +106,16 @@ def login_required(function):
 
 def Generate_JWT(payload):
     encoded_jwt = jwt.encode(payload, app.secret_key, algorithm=algorithm)
+    return encoded_jwt
+
+
+def getDeSoJWT(seedHex):
+    # returns JWT token of user that helps in public key validation in backend
+    private_key = bytes(seedHex, "utf-8")
+    private_key = binascii.unhexlify(private_key)
+    key = SigningKey.from_string(private_key, curve=SECP256k1)
+    key = key.to_pem()
+    encoded_jwt = jwt.encode({}, key, algorithm="ES256")
     return encoded_jwt
 
 
@@ -179,5 +194,163 @@ def home_page_user():
     )
 
 
+@app.route("/self-info", methods=["POST"])
+def selfInfo():
+    try:
+        encoded_jwt = request.headers.get("Authorization").split("Bearer ")[1]
+        try:
+            decoded_jwt = jwt.decode(
+                encoded_jwt, app.secret_key, algorithms=[algorithm, ])
+        except Exception as e:
+            return Response(
+                response=json.dumps(
+                    {"message": "Decoding JWT Failed", "exception": e.args}),
+                status=500,
+                mimetype='application/json'
+            )
+        email = decoded_jwt["email"]
+        query = f'''SELECT * FROM EventerUsers WHERE email = '{email}' '''
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        response = cur.fetchall()
+        if len(response) == 0:
+            return Response(
+                response=json.dumps(
+                    {"message": "User doesn't exist", "user": None}),
+                status=200,
+                mimetype='application/json'
+            )
+        else:
+            finalVal = {
+                "serial": response[0][1],
+                "username": response[0][5],
+                "description": response[0][3],
+                "profilePhoto": response[0][2],
+                "tags": response[0][4],
+            }
+            return Response(
+                response=json.dumps({
+                    "message": "User found",
+                    "user": finalVal
+                }),
+                status=200,
+                mimetype='application/json'
+            )
+    except Exception as e:
+        return Response(
+            response=json.dumps(
+                {"message": "Error getting user", "exception": e.args, "user": None}),
+            status=500,
+            mimetype='application/json'
+        )
+
+
+@app.route("/create-user", methods=["POST"])
+def create_user():
+    try:
+        encoded_jwt = request.headers.get("Authorization").split("Bearer ")[1]
+        try:
+            decoded_jwt = jwt.decode(
+                encoded_jwt, app.secret_key, algorithms=[algorithm, ])
+        except Exception as e:
+            return Response(
+                response=json.dumps(
+                    {"message": "Decoding JWT Failed", "exception": e.args, "userCreated": False}),
+                status=500,
+                mimetype='application/json'
+            )
+
+        data = request.get_json()
+        username = data["username"]
+        description = data["profileDescription"]
+        profilePhoto = data["profilePhoto"]
+        tags = data["tags"]
+        profilePhoto = profilePhoto.split("/")[3]
+        email = decoded_jwt["email"]
+        checkQuery = f'''SELECT * FROM EventerUsers WHERE username = '{username}' '''
+        cur = mysql.connection.cursor()
+        cur.execute(checkQuery)
+        result = cur.fetchall()
+        if len(result) != 0:
+            return Response(
+                response=json.dumps(
+                    {"message": "Username is taken", "userCreated": False}),
+                status=200,
+                mimetype='application/json'
+            )
+
+        query = f'''INSERT INTO EventerUsers (username, email, profileDescription, profilePhoto, tags) VALUES ('{username}', '{email}', '{description}', '{profilePhoto}', '{tags}')'''
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        mysql.connection.commit()
+        result = cur.fetchall()
+        return Response(
+            response=json.dumps({"message": "User created"}),
+            status=200,
+            mimetype='application/json'
+        )
+
+    except Exception as e:
+        return Response(
+            response=json.dumps(
+                {"message": "Error creating user", "exception": e.args}),
+            status=500,
+            mimetype='application/json'
+        )
+
+
+@app.route("/upload-image-to-deso", methods=["POST"])
+def upload_image_to_deso():
+    try:
+        if 'file' not in request.files:
+            return Response(
+                response=json.dumps({"message": "No file part"}),
+                status=500,
+                mimetype='application/json'
+            )
+        file = request.files['file']
+        if file.filename == '':
+            return Response(
+                response=json.dumps({"message": "No selected file"}),
+                status=500,
+                mimetype='application/json'
+            )
+
+        file.save('uploads/' + file.filename)
+        file_path = 'uploads/' + file.filename
+
+        tempFile = open(file_path, "rb")
+        imageFileList = [
+            ('file', ('screenshot.jpg', tempFile, 'image/png'))]
+        jwt = getDeSoJWT(EVENTER_SEED_HEX)
+        endpointURL = "https://node.deso.org/api/v0/upload-image"
+        payload = {
+            "UserPublicKeyBase58Check": EVENTER_PUBLIC_KEY,
+            "JWT": jwt,
+        }
+
+        response = requests.post(
+            endpointURL, data=payload, files=imageFileList)
+
+        # close the file
+        file.close()
+        tempFile.close()
+
+        # delete the file saved in uploads folder
+        if os.path.exists(file_path):
+            os.remove(file_path)
+        else:
+            print("File not found.")
+        return response.json()
+
+    except Exception as e:
+        return Response(
+            response=json.dumps(
+                {"message": "Error uploading Image", "exception": e.args}),
+            status=500,
+            mimetype='application/json'
+        )
+
+
 if __name__ == "__main__":
-    app.run(debug=True, port=5000, host="0.0.0.0")
+    app.run(debug=True)
