@@ -352,5 +352,84 @@ def upload_image_to_deso():
         )
 
 
+@app.route("/create-ad", methods=["POST"])
+def create_post():
+    try:
+        encoded_jwt = request.headers.get("Authorization").split("Bearer ")[1]
+        try:
+            decoded_jwt = jwt.decode(
+                encoded_jwt, app.secret_key, algorithms=[algorithm, ])
+        except Exception as e:
+            return Response(
+                response=json.dumps(
+                    {"message": "Decoding JWT Failed", "exception": e.args}),
+                status=500,
+                mimetype='application/json'
+            )
+        email = decoded_jwt["email"]
+        query = f'''SELECT * FROM EventerUsers WHERE email = '{email}' '''
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        response = cur.fetchall()
+        finalVal = {}
+        if len(response) == 0:
+            return Response(
+                response=json.dumps(
+                    {"message": "User doesn't exist", "user": None}),
+                status=200,
+                mimetype='application/json'
+            )
+        else:
+            finalVal = {
+                "serial": str(response[0][1]),
+                "username": str(response[0][5]),
+                "description": str(response[0][3]),
+                "profilePhoto": str(response[0][2]),
+                "tags": str(response[0][4]),
+            }
+        data = request.get_json()
+        shortDescription = data["shortDescription"]
+        longDescription = data["longDescription"]
+        isWork = data["isWork"]
+        imageList = data["imageList"]
+        desoSocial = deso.Social(EVENTER_PUBLIC_KEY, EVENTER_SEED_HEX)
+        count = 0
+        while True:
+            count += 1
+            response = desoSocial.submitPost(
+                body=f'shortDescription: {shortDescription}\nlongDescription: {longDescription}', postHashHexToModify="", postExtraData=finalVal, imageURLs=imageList)
+
+            if response.status_code == 200:
+                resJson = response.json()
+               
+                createdPostHashHex = resJson["PostEntryResponse"]["PostHashHex"]
+                isWorkVal = 1 if isWork else 0
+
+                query = f'''INSERT into EventerPosts (postHashHex, emailID, isWork) VALUES ('{createdPostHashHex}', '{email}', {isWorkVal})'''
+                cur = mysql.connection.cursor()
+                cur.execute(query)
+                mysql.connection.commit()
+
+                return Response(
+                    response=json.dumps(
+                        {"message": "success", "data": resJson}),
+                    status=200,
+                    mimetype='application/json'
+                )
+            if count == 3:
+                return Response(
+                    response=json.dumps({"message": "Failed to create post"}),
+                    status=500,
+                    mimetype='application/json'
+                )
+    except Exception as e:
+        return Response(
+            response=json.dumps(
+                {"message": "Error creating post", "exception": e.args}),
+            status=500,
+            mimetype='application/json'
+        )
+
+
 if __name__ == "__main__":
     app.run(debug=True)

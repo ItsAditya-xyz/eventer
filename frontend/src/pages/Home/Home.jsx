@@ -15,7 +15,7 @@ export default function Home() {
   };
 
   useEffect(() => {
-    const token = localStorage.getItem("JWT");
+    const token = localStorage.getItem("loggedInUser");
     if (token) {
       setHasloggedIn(true);
     }
@@ -26,8 +26,25 @@ export default function Home() {
       <Toaster />
       <div>
         <Navbar />
+        {hasLoggedIn && <CreateAd />}
 
-            <CreateAd/>
+        {!hasLoggedIn && (
+          <div className='flex flex-col justify-center items-center mt-20'>
+            <div className='flex flex-col justify-center items-center'>
+              <p className='text-center text-xl mt-5'>
+                Create your Vendor Advertisement by signing up for Eventer!
+              </p>
+            </div>
+            <div className='flex flex-col justify-center items-center'>
+              <Link to='/start-login'>
+                <button className='bg-gradient-to-r from-green-700 to-purple-500 hover:from-green-800 hover:to-purple-600 rounded-full py-3 px-6 my-2 text-lg text-white '>
+                  Get Started
+                </button>
+              </Link>
+            </div>
+          </div>
+        )}
+
         <div id='localPlaces' className='mt-20'>
           <div id='Food' className='mt-20'>
             <div className='flex justify-center my-5'>

@@ -40,11 +40,12 @@ export default function Landing(props) {
               your events and also give advertisements of what you serve to the
               world.
             </p>
-            <a
-              href='#localPlaces'
-              className='bg-gradient-to-r from-green-700 to-purple-500 rounded-full py-4 px-8 text-gray-50 uppercase text-xl md:self-start my-5 hover:from-green-800 hover:to-purple-600'>
+            <Link
+              to='/app'
+           
+              className='bg-gradient-to-r from-green-700 to-purple-500 hover:from-green-800 hover:to-purple-600 rounded-full py-4 px-8 text-gray-50 uppercase text-xl md:self-start my-5 '>
               See Venders
-            </a>
+            </Link>
           </div>
           <div className='flex justify-center'>
             <img src={bigLogo} className='w-80 h-80' />

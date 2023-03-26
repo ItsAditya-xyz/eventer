@@ -4,23 +4,72 @@ import { BiImageAdd } from "react-icons/bi";
 import { Loader } from "../../components/Loader";
 import toast, { Toaster } from "react-hot-toast";
 import { BACKEND_URL } from "../../constants/constant";
+import { useNavigate } from "react-router-dom";
 export default function CreateAd() {
+  const navigate = useNavigate();
   const [postDescription, setPostDescription] = useState("");
   const [shortDescription, setShortDescription] = useState("");
   const [imageList, setImageList] = useState([]);
   const [uploadingImage, setUploadingImage] = useState(false);
   const fileInput = React.useRef(null);
+  const [creatingAdd, setCreatingAdd] = useState(false);
   const createAdd = async () => {
-    console.log("create add func");
+    if (creatingAdd) return;
+    if (!postDescription) return toast.error("Please enter a description");
+    if (!shortDescription)
+      return toast.error("Please enter a short description");
+    if (imageList.length === 0)
+      return toast.error("Please upload atleast one image");
+    try {
+      setCreatingAdd(true);
+      const loadingToast = toast.loading("Creating advertisement...");
+      const res = await fetch(`${BACKEND_URL}create-ad`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("JWT")}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          longDescription: postDescription,
+          shortDescription: shortDescription,
+          imageList: imageList,
+          isWork: 0,
+        }),
+      });
+      const data = await res.json();
+      if (data.message === "Decoding JWT Failed") {
+        navigate("/start-login");
+      }
+      console.log(data);
+      if (data.exception) {
+        toast.dismiss(loadingToast);
+        toast.error(data.exception[0]);
+        setCreatingAdd(false);
+      }
+      if (data.message == "success") {
+        toast.dismiss(loadingToast);
+        toast.success("Advertisement created");
+        setCreatingAdd(false);
+        // await for 2 seconds and then reload
+        setTimeout(() => {
+          window.location.reload();
+        }, 2000);
+      }
+
+      setCreatingAdd(false);
+    } catch (err) {
+      setCreatingAdd(false);
+      toast.error(`Error creating add ${err.message}`);
+    }
   };
 
   const handleImage = async () => {
     if (uploadingImage) return;
-    setUploadingImage(true);
+
     try {
       const file = fileInput.current.files[0];
       if (!file) return toast.error("Please select a file");
-      if (file.size > 1000000) return toast.error("File size too large");
+      if (file.size > 4000000) return toast.error("File size too large");
       if (!file.type.includes("image"))
         return toast.error("Please upload an image file");
 
@@ -28,7 +77,7 @@ export default function CreateAd() {
       //mkae post request to BACKEND_URL
       const formData = new FormData();
       formData.append("file", file);
-
+      setUploadingImage(true);
       const res = await fetch(`${BACKEND_URL}upload-image-to-deso`, {
         method: "POST",
         body: formData,

@@ -16,7 +16,7 @@ export default function Callback() {
     const data = await res.json();
     if (data.user) {
       localStorage.setItem("loggedInUser", JSON.stringify(data.user));
-      return nav("/");
+      return nav("/app");
     } else {
       return nav("/sign-up");
     }
