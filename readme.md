@@ -1,35 +1,25 @@
+# Eventer
 
+![New LOGO ](https://github.com/ItsAditya-xyz/eventer/blob/fe3b50adc092f72a1648e379945d57386a423290/frontend/src/assets/Screenshot%202023-03-26%20at%202.21.52%20PM.png)
 
+<p align="center">
+  Eventer is an online platform that allows users to find and connect with their favorite event organizers.
+</p>
 
+# Features
+- Find and connect with event organizers
+- Browse upcoming events
 
+# Tech Stack
+- Python
+- Flask
+- React
+- Tailwind
 
-                       ![New LOGO ](https://user-images.githubusercontent.com/86601825/227764806-b530feed-507f-4acc-9a42-33a1f1f6dd3f.png)
-
-
-Eventer
-
-
-Eventer is a Platfrom for People to come together for Organising Events and Helps working professionals working in the Space to work with CLients in a Cohesive manner,HERE :https://eventer-gamma.vercel.app/ 
-
-Our tech stack includes Python, Flask, React, and Tailwind.
-
-
-
-
-
-
-
-Getting Started
-
-
-To get started with Eventer, you'll need to do the following:
-Clone the repository: git clone https://github.com/your-username/Eventer.git
-
-Install the necessary dependencies: npm install
-Start the development server: npm run start
-
-Once you've completed these steps, you should be able to access the Eventer platform at http://localhost:3000.
-
+# Requirements
+- Python 3.7 and Flask
+- Node.js 12 or later
+- Git
 
 
 
