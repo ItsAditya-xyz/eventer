@@ -34,7 +34,7 @@ export default function Home() {
         const data = await respone.json();
         toast.dismiss(loadingTost);
         if (data.message === "success") {
-          toast.success("Contacted seller successfully");
+          toast.success("Contacted seller successfully. They will contact you back if interested");
         } else {
           toast.error("Error contacting seller");
         }
