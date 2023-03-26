@@ -1,10 +1,8 @@
-# Eventer
-
 <p align="center" >
   <img width="350" height="150" src="https://github.com/ItsAditya-xyz/eventer/blob/main/frontend/src/assets/logo.png">
 </p>
 <p align="center">
-One-stop for all event organizers, here you can find all the local vendors in your area who are the best in their field at the best price... if you are looking for a local area to organize the event, searching for vendors who can make food, or looking for vendors who can print  T-Shirt, Caps, Hoodies or any type of swags for your community meet-up you just need this one platform.
+Eventer offers event organizers a one-stop-shop to find the best local vendors in their area for food, printing, and other services at competitive prices.
 </p>
 
 ![New LOGO ](https://github.com/ItsAditya-xyz/eventer/blob/fe3b50adc092f72a1648e379945d57386a423290/frontend/src/assets/Screenshot%202023-03-26%20at%202.21.52%20PM.png)
