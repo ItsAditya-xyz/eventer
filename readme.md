@@ -18,12 +18,18 @@ Eventer offers event organizers a one-stop-shop to find the best local vendors i
 - Flask
 - React
 - Tailwind
+- DeSo
 
 # Requirements
 - Python 3.7 and Flask
 - Node.js 12 or later
 - Git
 
+# Live Link
+- https://eventer-gamma.vercel.app/
+
+# Demo Link
+- https://www.youtube.com/watch?v=ifj_69p1X68&ab_channel=AdityaChaudhary
 
 
 
