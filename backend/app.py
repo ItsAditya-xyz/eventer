@@ -20,6 +20,8 @@ import binascii
 from base58 import b58decode_check
 from ecdsa import SECP256k1, VerifyingKey, SigningKey
 import deso
+import smtplib
+import ssl
 
 # TODO: add credentials for google login in .evn and use them here
 app = Flask(__name__)
@@ -34,7 +36,6 @@ app.config["MYSQL_USER"] = config("MYSQL_USER")
 app.config["MYSQL_PASSWORD"] = config("MYSQL_PASSWORD")
 DB_NAME = config("MYSQL_DB")
 app.config["MYSQL_DB"] = DB_NAME
-
 
 
 mysql = MySQL(app)
@@ -65,11 +66,6 @@ flow = Flow.from_client_secrets_file(
 def sendMail(recepient, subject, body):
     try:
         smtp_server = "smtp.gmail.com"
-        port = 587  # For starttls
-
-        import smtplib
-        import ssl
-
         port = 587  # For starttls
         smtp_server = "smtp.gmail.com"
         sender_email = "eventer2023@gmail.com"
@@ -402,7 +398,7 @@ def create_post():
 
             if response.status_code == 200:
                 resJson = response.json()
-               
+
                 createdPostHashHex = resJson["PostEntryResponse"]["PostHashHex"]
                 isWorkVal = 1 if isWork else 0
 
@@ -427,6 +423,54 @@ def create_post():
         return Response(
             response=json.dumps(
                 {"message": "Error creating post", "exception": e.args}),
+            status=500,
+            mimetype='application/json'
+        )
+
+
+@app.route("/contact-vendor", methods=["POST"])
+def contactVendor():
+    try:
+
+        encoded_jwt = request.headers.get("Authorization").split("Bearer ")[1]
+        try:
+            decoded_jwt = jwt.decode(
+                encoded_jwt, app.secret_key, algorithms=[algorithm, ])
+        except Exception as e:
+            return Response(
+                response=json.dumps(
+                    {"message": "Decoding JWT Failed", "exception": e.args}),
+                status=500,
+                mimetype='application/json'
+            )
+
+        selfMail = decoded_jwt["email"]
+        data = request.get_json()
+        serial = data["serial"]
+        # get email from db where serial = serial
+        query = f'''SELECT email FROM EventerUsers WHERE counter = {serial}'''
+        cur = mysql.connection.cursor()
+        cur.execute(query)
+        response = cur.fetchall()
+        email = response[0][0]
+        emailRes = sendMail(
+            email, "New Enquiry", f"You have a new enquiry. Please check your Advertisement on Eventer!\nTheir Email: {selfMail}\n\nRegards,\nAditya Chaudhary\nEventer Team")
+        if(emailRes == 200):
+            return Response(
+                response=json.dumps({"message": "Error contacting vendor"}),
+                status=500,
+                mimetype='application/json'
+            )
+        else:
+            return Response(
+                response=json.dumps({"message": "success"}),
+                status=200,
+                mimetype='application/json'
+            )
+    except Exception as e:
+        return Response(
+            response=json.dumps(
+                {"message": "Error contacting vendor", "exception": e.args}),
             status=500,
             mimetype='application/json'
         )
