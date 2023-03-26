@@ -14,7 +14,6 @@ import google
 import jwt
 from flask_cors import CORS
 from flask_mysqldb import MySQL
-import openai
 import smtplib
 import ssl
 
@@ -45,8 +44,6 @@ algorithm = config("ALGORITHM")
 BACKEND_URL = config("BACKEND_URL")
 FRONTEND_URL = config("FRONTEND_URL")
 
-OPEN_AI_KEY = config("PAID_API_KEY")
-openai.api_key = OPEN_AI_KEY
 
 flow = Flow.from_client_secrets_file(
     client_secrets_file=client_secrets_file,

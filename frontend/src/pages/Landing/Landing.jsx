@@ -4,6 +4,7 @@ import { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import bigLogo from "../../assets/bigLogo.png";
+import Navbar from "../../components/Navbar";
 export default function Landing(props) {
   const [isLoggin, setIsLoggin] = useState(false);
   const [hasLoggedIn, setHasloggedIn] = useState(false);
@@ -23,50 +24,8 @@ export default function Landing(props) {
     <div className='leading-relaxed tracking-wide flex flex-col'>
       <Toaster />
       <div>
-        <div className='container h-8 p-5 mx-0'>
-          <nav className='flex justify-between'>
-            <div>
-              <img
-                src={logo}
-                alt=''
-                className='h-14 px-6 py-2'
-              />
-            </div>
-            <div className='mt-2'>
-              <a
-                href='#localPlaces'
-                className='hover:text-purple-500 p-5 text-gray-800'>
-                Local Places
-              </a>
-              <a
-                href='#Food'
-                className='hover:text-purple-500 p-5 text-gray-800'>
-                food
-              </a>
-              <a
-                href='#Swags'
-                className='hover:text-purple-500 p-5 text-gray-800'>
-                Stickers
-              </a>
-              <button className=' rounded-full bg-gray-700 py-2 px-5 text-white hover:bg-black     justify-center'>
-                <svg
-                  xmlns='http://www.w3.org/2000/svg'
-                  fill='none'
-                  viewBox='0 0 24 24'
-                  stroke-width='1.5'
-                  stroke='currentColor'
-                  className='w-5 h-5 inline-block mb-2 ml-1'>
-                  <path
-                    stroke-linecap='round'
-                    stroke-linejoin='round'
-                    d='M15.75 10.5V6a3.75 3.75 0 10-7.5 0v4.5m11.356-1.993l1.263 12c.07.665-.45 1.243-1.119 1.243H4.25a1.125 1.125 0 01-1.12-1.243l1.264-12A1.125 1.125 0 015.513 7.5h12.974c.576 0 1.059.435 1.119 1.007zM8.625 10.5a.375.375 0 11-.75 0 .375.375 0 01.75 0zm7.5 0a.375.375 0 11-.75 0 .375.375 0 01.75 0z'
-                  />
-                </svg>
-                Check Out !
-              </button>
-            </div>
-          </nav>
-        </div>
+        
+        <Navbar/>
 
         <div className='md:flex md:flex-row mt-20 justify-around'>
           <div className='md:w-2/5 flex flex-col justify-center items-center'>
@@ -85,7 +44,7 @@ export default function Landing(props) {
             </p>
             <a
               href='#localPlaces'
-              className='bg-gradient-to-r from-green-700 to-purple-500 rounded-full py-4 px-8 text-gray-50 uppercase text-xl md:self-start my-5'>
+              className='bg-gradient-to-r from-green-700 to-purple-500 rounded-full py-4 px-8 text-gray-50 uppercase text-xl md:self-start my-5 hover:from-green-800 hover:to-purple-600'>
               See Venders
             </a>
           </div>
