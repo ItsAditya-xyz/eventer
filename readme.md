@@ -8,7 +8,7 @@
 </p>
 
 # Features
-- find Best Vendors for Food , Stickers and Swags in your Area at beat price.
+- Find Best Vendors for Food , Stickers and Swags in your Area at beat price.
 - Find and connect with event organizers
 - Browse upcoming events
 
