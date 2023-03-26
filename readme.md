@@ -12,13 +12,7 @@
 
 
 
-Eventer is a Platfrom for People to come together for Organising Events and Helps working professionals working in the Space to work with CLients in a Cohesive manner, HERE :eventer-gamma.vercel.app
-
-
-
-eventer-git-main-adityachaudhary0005.vercel.app
-eventer-gamma.vercel.app
-eventer-adityachaudhary0005.vercel.app
+Eventer is a Platfrom for People to come together for Organising Events and Helps working professionals working in the Space to work with CLients in a Cohesive manner, HERE :https://eventer-gamma.vercel.app/
 
 
 
