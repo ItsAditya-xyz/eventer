@@ -94,24 +94,35 @@ export default function Home() {
               {latestAds.map((ad) => (
                 <div className='shadow-lg rounded-lg w-full md:w-1/2 lg:w-1/3 p-4'>
                   <img
-                    src={ad.imageURLs[0]}
+                    src={ad.ImageURLs[0]}
                     className='rounded-tl-lg rounded-tr-lg'
                   />
-                  <div className='p-5'>
-                    <h3>{ad.PostExtraData.username}</h3>
-                    <img
-                      src={ad.ProfileEntryResponse.ProfilePic}
-                      className='rounded-full h-10 w-10'
-                    />
-
-                    <h4 className=' bg-green-300 text-green-600 px-2 py-1'>#{ad.PostExtraData.tags}</h4>
-                    <p>
-                      {ad.substring(
-                        ad.indexOf("shortDescription:") + 17,
-                        ad.indexOf("longDescription:") - 1
+                  <div className='p-5 flex flex-col space-y-1'>
+                    <div className='flex items-center space-x-1'>
+                      <img
+                        src={`https://images.deso.org/${ad.PostExtraData.profilePhoto}`}
+                        className='rounded-full h-10 w-10'
+                      />
+                      <h3 className='font-semibold'>
+                        {ad.PostExtraData.username}
+                      </h3>
+                    </div>
+                    <div className='w-full'>
+                      <h4 className=' bg-green-100 text-green-600 px-2 py-1 rounded-md'>
+                        #{ad.PostExtraData.tags}
+                      </h4>
+                    </div>
+                    <p className='font-bold underline'>
+                      {ad.Body.substring(
+                        ad.Body.indexOf("shortDescription:") + 17,
+                        ad.Body.indexOf("longDescription:") - 1
                       )}
                     </p>
-                    <p>{ad.substring(ad.indexOf("longDescription:") + 16)}</p>
+                    <p>
+                      {ad.Body.substring(
+                        ad.Body.indexOf("longDescription:") + 16
+                      )}
+                    </p>
                     <button className='w-full bg-gradient-to-r from-black to-gray-700 rounded-full py-2 px-4 my-2 text-sm text-white hover:bg-pink-600 hover:from-amber-900 hover:to-amber-200 flex flex-row justify-center'>
                       <svg
                         xmlns='http://www.w3.org/2000/svg'
