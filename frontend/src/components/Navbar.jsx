@@ -1,4 +1,4 @@
-import React, { useState, Fragment } from "react";
+import React, { useState, Fragment, useEffect } from "react";
 import logo from "../assets/logo.png";
 import { Menu, Transition } from "@headlessui/react";
 import { BiChevronDown, BiHomeAlt } from "react-icons/bi";
@@ -11,6 +11,14 @@ export default function Navbar() {
     localStorage.removeItem("loggedInUser");
     window.location.reload();
   };
+
+  useEffect(() => {
+    const loggedInUser = JSON.parse(localStorage.getItem("loggedInUser"));
+    if (loggedInUser) {
+      setUsername(loggedInUser.username);
+      setProfilePic(loggedInUser.profilePhoto);
+    }
+  }, []);
   return (
     <div className='container h-8 p-5 mx-0'>
       <nav className='flex justify-between'>

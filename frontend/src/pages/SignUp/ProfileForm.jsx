@@ -6,7 +6,7 @@ import { BiUpload, BiX } from "react-icons/bi";
 import banner from "../../assets/banner.jpg";
 import default_profile_pic from "../../assets/default_profile_pic.png";
 import { BACKEND_URL } from "../../constants/constant";
-function ProfileForm() {
+function ProfileForm({ tags }) {
   const navigate = useNavigate();
 
   const [profileImage, setProfileImage] = useState(default_profile_pic);
@@ -40,7 +40,7 @@ function ProfileForm() {
         username,
         profileDescription,
         profilePhoto: profileImageFile ? profileImageFile : DEFAULT_PROFILE_PIC,
-        tags: "food",
+        tags: tags,
       }),
     });
     const data = await res.json();
@@ -59,7 +59,7 @@ function ProfileForm() {
         profileDescription: profileDescription,
         profilePhoto: profileImageFile ? profileImageFile : DEFAULT_PROFILE_PIC,
       };
-      localStorage.setItem("user", JSON.stringify(tempJson));
+      localStorage.setItem("loggedInUser", JSON.stringify(tempJson));
       navigate("/app");
     }
   };
