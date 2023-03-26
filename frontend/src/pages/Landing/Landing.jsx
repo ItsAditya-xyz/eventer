@@ -5,6 +5,7 @@ import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import bigLogo from "../../assets/bigLogo.png";
 import Navbar from "../../components/Navbar";
+import Footer from "./Footer";
 export default function Landing(props) {
   const [isLoggin, setIsLoggin] = useState(false);
   const [hasLoggedIn, setHasloggedIn] = useState(false);
@@ -230,6 +231,7 @@ export default function Landing(props) {
           </div>
         </div>
       </div>
+      <Footer/>
     </div>
   );
 }
