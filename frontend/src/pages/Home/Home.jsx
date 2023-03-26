@@ -1,15 +1,51 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Toaster } from "react-hot-toast";
+import { toast, Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 
 import Navbar from "../../components/Navbar";
 import Footer from "../Landing/Footer";
 import CreateAd from "./CreateAd";
+import { BACKEND_URL } from "../../constants/constant";
 export default function Home() {
   const [isLoggin, setIsLoggin] = useState(false);
   const [hasLoggedIn, setHasloggedIn] = useState(false);
+  const [isContacting, setIsContacting] = useState(false);
   const navigate = useNavigate();
+
+  const handleContact = async (serial) => {
+    if (!hasLoggedIn) {
+      toast.error("Please login to contact the seller");
+    } else {
+      if (isContacting) return;
+      try {
+        setIsContacting(true);
+        const loadingTost = toast.loading("Contacting seller...");
+        const respone = await fetch(`${BACKEND_URL}/contact-vendor`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("JWT")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            serial: serial,
+          }),
+        });
+        const data = await respone.json();
+        toast.dismiss(loadingTost);
+        if (data.message === "success") {
+          toast.success("Contacted seller successfully");
+        } else {
+          toast.error("Error contacting seller");
+        }
+        setIsContacting(false);
+      } catch (e) {
+        setIsContacting(false);
+        toast.error("Error contacting seller");
+      }
+    }
+  };
+
   const handleLogin = (e) => {
     navigate("start-login");
   };
@@ -123,8 +159,12 @@ export default function Home() {
                         ad.Body.indexOf("longDescription:") + 16
                       )}
                     </p>
-                    <div className="mx-auto">
-                      <button className=' bg-gradient-to-r from-black to-gray-700 rounded-full py-3 px-8 my-2 text-sm text-white hover:bg-pink-600 hover:from-amber-900 hover:to-amber-200 flex flex-row justify-center'>
+                    <div className='mx-auto'>
+                      <button
+                        className=' bg-gradient-to-r from-black to-gray-700 rounded-full py-3 px-8 my-2 text-sm text-white hover:bg-pink-600 hover:from-amber-900 hover:to-amber-200 flex flex-row justify-center'
+                        onClick={() => {
+                          handleContact(ad.PostExtraData.serial);
+                        }}>
                         Contact
                       </button>
                     </div>

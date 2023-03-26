@@ -446,7 +446,7 @@ def contactVendor():
 
         selfMail = decoded_jwt["email"]
         data = request.get_json()
-        serial = data["serial"]
+        serial = int(data["serial"])
         # get email from db where serial = serial
         query = f'''SELECT email FROM EventerUsers WHERE counter = {serial}'''
         cur = mysql.connection.cursor()
@@ -457,14 +457,15 @@ def contactVendor():
             email, "New Enquiry", f"You have a new enquiry. Please check your Advertisement on Eventer!\nTheir Email: {selfMail}\n\nRegards,\nAditya Chaudhary\nEventer Team")
         if(emailRes == 200):
             return Response(
-                response=json.dumps({"message": "Error contacting vendor"}),
-                status=500,
-                mimetype='application/json'
-            )
-        else:
-            return Response(
                 response=json.dumps({"message": "success"}),
                 status=200,
+                mimetype='application/json'
+            )
+           
+        else:
+            return Response(
+                response=json.dumps({"message": "Error contacting vendor"}),
+                status=500,
                 mimetype='application/json'
             )
     except Exception as e:
