@@ -22,9 +22,9 @@ export default function Navbar() {
   return (
     <div className='container h-8 p-5 mx-0'>
       <nav className='flex justify-between'>
-        <div>
+        <Link to='/'>
           <img src={logo} alt='' className='h-14 px-6 py-2' />
-        </div>
+        </Link>
         <div className='mt-2'>
           {username !== "" && (
             <div className='flex flex-row items-center justify-end'>
