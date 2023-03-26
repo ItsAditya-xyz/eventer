@@ -16,15 +16,16 @@ Our tech stack includes Python, Flask, React, and Tailwind.
 
 
 
+
+
+
 Getting Started
 
 
 To get started with Eventer, you'll need to do the following:
-
 Clone the repository: git clone https://github.com/your-username/Eventer.git
 
 Install the necessary dependencies: npm install
-
 Start the development server: npm run start
 
 Once you've completed these steps, you should be able to access the Eventer platform at http://localhost:3000.
