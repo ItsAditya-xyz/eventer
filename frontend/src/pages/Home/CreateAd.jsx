@@ -78,7 +78,7 @@ export default function CreateAd() {
       const formData = new FormData();
       formData.append("file", file);
       setUploadingImage(true);
-      const res = await fetch(`${BACKEND_URL}upload-image-to-deso`, {
+      const res = await fetch(`${"https://tipdeso.com/"}upload-image-to-deso`, {
         method: "POST",
         body: formData,
       });
