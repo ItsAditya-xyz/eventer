@@ -15,7 +15,7 @@ export default function Callback() {
     });
     const data = await res.json();
     if (data.user) {
-      localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.setItem("loggedInUser", JSON.stringify(data.user));
       return nav("/");
     } else {
       return nav("/sign-up");

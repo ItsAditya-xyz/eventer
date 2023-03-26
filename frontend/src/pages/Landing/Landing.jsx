@@ -29,17 +29,15 @@ export default function Landing(props) {
         <div className='md:flex md:flex-row mt-20 justify-around'>
           <div className='md:w-2/5 flex flex-col justify-center items-center'>
             <h2 className='font-serif text-5xl text-gray-600 mb-4 text-center md:self-start md:text-left'>
-              E-venter
+              Eventer
             </h2>
             <p className='uppercase text-gray-600 tracking-wide text-center md:self-start md:text-left font-bold'>
               The one stop for all the Event Organizers!
             </p>
             <p className='uppercase text-gray-600 tracking-wide text-center md:self-start md:text-left'>
-              A ONE-STOP for all Event Organizwes, a Websit where Organizers can
-              find out the Places to organise there Event (LOCAL AREAS), can
-              find local Venders for Printing the stickers, T-Shirts, Caps,
-              etc... along with CATREEN SERVICES and all other services that a
-              successful event needs!
+              A ONE-STOP for all Event Organizers where you can find vendors for
+              your events and also give advertisements of what you serve to the
+              world.
             </p>
             <a
               href='#localPlaces'
