@@ -35,10 +35,12 @@ app.config["MYSQL_PASSWORD"] = config("MYSQL_PASSWORD")
 DB_NAME = config("MYSQL_DB")
 app.config["MYSQL_DB"] = DB_NAME
 
-GMAIL_PASSWORD = config("GMAIL_PASSWORD")
+
 
 mysql = MySQL(app)
 # bypass http
+
+GMAIL_PASSWORD = config("GMAIL_PASSWORD")
 os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
 app.secret_key = config("GOOGLE_CLIENT_SECRET")
 GOOGLE_CLIENT_ID = config("GOOGLE_CLIENT_ID")
@@ -47,7 +49,6 @@ client_secrets_file = os.path.join(
 algorithm = config("ALGORITHM")
 BACKEND_URL = config("BACKEND_URL")
 FRONTEND_URL = config("FRONTEND_URL")
-
 EVENTER_SEED_HEX = config("EVENTER_SEED_HEX")
 EVENTER_PUBLIC_KEY = config("EVENTER_PUBLIC_KEY")
 flow = Flow.from_client_secrets_file(
