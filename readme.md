@@ -18,6 +18,7 @@ Eventer offers event organizers a one-stop-shop to find the best local vendors i
 - Flask
 - React
 - Tailwind
+- DeSo
 
 # Requirements
 - Python 3.7 and Flask
