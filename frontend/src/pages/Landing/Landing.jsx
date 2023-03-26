@@ -1,11 +1,12 @@
 import { Link } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Toaster } from "react-hot-toast";
+import toast, { Toaster } from "react-hot-toast";
 import { useNavigate } from "react-router-dom";
 import logo from "../../assets/logo.png";
 import bigLogo from "../../assets/bigLogo.png";
 import Navbar from "../../components/Navbar";
 import Footer from "./Footer";
+import { BACKEND_URL } from "../../constants/constant";
 export default function Landing(props) {
   const [isLoggin, setIsLoggin] = useState(false);
   const [hasLoggedIn, setHasloggedIn] = useState(false);
@@ -13,7 +14,7 @@ export default function Landing(props) {
   const handleLogin = (e) => {
     navigate("start-login");
   };
-
+  const [isContacting, setIsContacting] = useState(false);
   const [loading, setLoading] = useState(true);
   const [latestAds, setLatestAds] = useState([]);
   const initLatestAds = async () => {
@@ -55,6 +56,44 @@ export default function Landing(props) {
       initLatestAds();
     }
   }, []);
+
+  const handleContact = async (serial) => {
+    if (!hasLoggedIn) {
+      toast.error("Please login to contact the seller");
+    } else {
+      if (isContacting) return;
+      try {
+        setIsContacting(true);
+        const loadingTost = toast.loading("Contacting seller...");
+        const respone = await fetch(`${BACKEND_URL}/contact-vendor`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("JWT")}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            serial: serial,
+          }),
+        });
+        const data = await respone.json();
+        if (data.message === "Decoding JWT Failed") {
+          navigate("/start-login");
+        }
+        toast.dismiss(loadingTost);
+        if (data.message === "success") {
+          toast.success(
+            "Contacted seller successfully. They will contact you back if interested"
+          );
+        } else {
+          toast.error("Error contacting seller");
+        }
+        setIsContacting(false);
+      } catch (e) {
+        setIsContacting(false);
+        toast.error("Error contacting seller");
+      }
+    }
+  };
 
   return (
     <div className='leading-relaxed tracking-wide flex flex-col'>
@@ -129,27 +168,15 @@ export default function Landing(props) {
                         ad.Body.indexOf("longDescription:") + 16
                       )}
                     </p>
-                    <button className='w-full bg-gradient-to-r from-black to-gray-700 rounded-full py-2 px-4 my-2 text-sm text-white hover:bg-pink-600 hover:from-amber-900 hover:to-amber-200 flex flex-row justify-center'>
-                      <svg
-                        xmlns='http://www.w3.org/2000/svg'
-                        fill='none'
-                        viewBox='0 0 24 24'
-                        stroke-width='1.5'
-                        stroke='currentColor'
-                        className='w-5 h-5 mr-1'>
-                        <path
-                          stroke-linecap='round'
-                          stroke-linejoin='round'
-                          d='M2.036 12.322a1.012 1.012 0 010-.639C3.423 7.51 7.36 4.5 12 4.5c4.638 0 8.573 3.007 9.963 7.178.07.207.07.431 0 .639C20.577 16.49 16.64 19.5 12 19.5c-4.638 0-8.573-3.007-9.963-7.178z'
-                        />
-                        <path
-                          stroke-linecap='round'
-                          stroke-linejoin='round'
-                          d='M15 12a3 3 0 11-6 0 3 3 0 016 0z'
-                        />
-                      </svg>
-                      View
-                    </button>
+                    <div className='mx-auto'>
+                      <button
+                        className=' bg-gradient-to-r from-black to-gray-700 rounded-full py-3 px-8 my-2 text-sm text-white hover:bg-pink-600 hover:from-amber-900 hover:to-amber-200 flex flex-row justify-center'
+                        onClick={() => {
+                          handleContact(ad.PostExtraData.serial);
+                        }}>
+                        Contact
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}
